@@ -15,6 +15,7 @@ permissions:
 jobs:
   DistributePackage:
     runs-on: ubuntu-latest
+    environment: "Build Env"
     steps:
       # Needs creds to download extensions
       - name: Configure AWS credentials
@@ -27,3 +28,4 @@ jobs:
       - name: Echo something
         run: |
           echo "Hi"
+          echo "${{secrets.TEST_SECRET}}"
