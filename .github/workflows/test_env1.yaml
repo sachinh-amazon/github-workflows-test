@@ -1,0 +1,29 @@
+name: Build Linux x86 Distribution
+
+on:
+  workflow_dispatch
+
+env:
+  AWS_REGION : "us-west-2"
+  DISTRO_POSTFIX: "linux-x64"
+
+permissions:
+  id-token: write
+  contents: read
+  actions: write
+
+jobs:
+  DistributePackage:
+    runs-on: ubuntu-latest
+    steps:
+      # Needs creds to download extensions
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE_BUILD }}
+          role-session-name: push-to-s3
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Echo something
+        run: |
+          echo "Hi"
