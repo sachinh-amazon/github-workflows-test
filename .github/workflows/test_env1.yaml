@@ -15,7 +15,7 @@ permissions:
 jobs:
   DistributePackage:
     runs-on: ubuntu-latest
-    environment: "Build Env"
+    # environment: "Build Env"
     steps:
       # Needs creds to download extensions
       - name: Configure AWS credentials
