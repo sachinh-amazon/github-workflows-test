@@ -15,13 +15,13 @@ permissions:
 jobs:
   DistributePackage:
     runs-on: ubuntu-latest
-    # environment: "Build Env"
+    environment: "Build Env"
     steps:
       # Needs creds to download extensions
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.IAM_ROLE_BUILD }}
+          role-to-assume: ${{ secrets.TEST_SECRET }}
           role-session-name: push-to-s3
           aws-region: ${{ env.AWS_REGION }}
 
