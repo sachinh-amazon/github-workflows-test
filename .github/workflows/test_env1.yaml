@@ -21,6 +21,11 @@ jobs:
         run: |
           echo "Hi"
           echo "${{secrets.TEST_SECRET}}"
-      - name: Print Github commit
+      - name: Create Artifact
         run: |
-          echo "${{ github.sha }}"
+          echo "Hi there!" >> sample_file.txt
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: ${{github.sha}}
+          path: sample_file.txt
