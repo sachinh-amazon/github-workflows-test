@@ -17,15 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: "Build Env"
     steps:
-      # Needs creds to download extensions
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.TEST_SECRET }}
-          role-session-name: push-to-s3
-          aws-region: ${{ env.AWS_REGION }}
-
       - name: Echo something
         run: |
           echo "Hi"
           echo "${{secrets.TEST_SECRET}}"
+      - name: Print Github commit
+        run: |
+          echo "${{ github.sha }}"
