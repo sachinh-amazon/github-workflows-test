@@ -4,10 +4,11 @@ on:
     branches:
       - 'main'
       - '*.*.x'
+  workflow_dispatch:
   
 jobs:
   build:
-    name: Build Targets
+    name: Build Code Editor Targets
     runs-on: ubuntu-latest
     environment: security-scan
     strategy:
@@ -20,4 +21,4 @@ jobs:
     steps:
       - name: Start Build Workflow
         run: |
-          echo "Starting Build Workflow for: ${{ matrix.build-targets }}"
+          echo "Starting Build Workflow for target: ${{ matrix.build-targets }}"
