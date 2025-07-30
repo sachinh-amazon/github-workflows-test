@@ -1,4 +1,4 @@
-name: Security Scan
+name: Build Workflow
 on:
   push:
     branches:
@@ -6,10 +6,14 @@ on:
       - '*.*.x'
   
 jobs:
-  SecurityScan:
+  build:
+    name: Build Targets
     runs-on: ubuntu-latest
     environment: security-scan
+    strategy:
+      matrix:
+        build-targets: [code-editor-server, code-editor-sagemaker-server, code-editor-web-embedded]
     steps:
-      - name: Start Security Scan
+      - name: Start Build Workflow
         run: |
-          echo "Starting Security Scan"
+          echo "Starting Build Workflow with: ${{ matrix.build-targets }}"
