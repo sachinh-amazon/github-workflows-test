@@ -1,0 +1,16 @@
+name: Security Scan
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - '*.*.x'
+    types: [opened, synchronize, reopened]
+  
+jobs:
+  SecurityScan:
+    runs-on: ubuntu-latest
+    environment: security-scan
+    steps:
+      - name: Start Security Scan
+        run: |
+          echo "Starting Security Scan"
