@@ -13,7 +13,11 @@ jobs:
     strategy:
       matrix:
         build-targets: [code-editor-server, code-editor-sagemaker-server, code-editor-web-embedded]
+        exclude:
+          # Only build SageMaker for now, remove the excluded targets when needed in the future.
+          - build-targets: code-editor-server
+          - build-targets: code-editor-web-embedded
     steps:
       - name: Start Build Workflow
         run: |
-          echo "Starting Build Workflow with: ${{ matrix.build-targets }}"
+          echo "Starting Build Workflow for: ${{ matrix.build-targets }}"
