@@ -86,10 +86,10 @@ jobs:
           previous_day_runs=$(echo "$completed_runs" | jq --arg start "$previous_day_start" --arg end "$previous_day_end" '.[] | select(.startedAt >= $start and .startedAt <= $end)')
           
           echo "Found completed workflow runs from 1 hour ago:"
-          echo "$previous_day_runs" | jq -r '.id'
+          echo "$previous_day_runs" | jq -r '.databaseId'
           
           # Store workflow run IDs for artifact checking
-          run_ids=$(echo "$previous_day_runs" | jq -r '.id' | tr '\n' ' ')
+          run_ids=$(echo "$previous_day_runs" | jq -r '.databaseId' | tr '\n' ' ')
           echo "workflow-run-ids=$run_ids" >> $GITHUB_OUTPUT
 
       - name: Check for successful scan artifacts from previous day
