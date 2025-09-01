@@ -82,7 +82,7 @@ jobs:
           echo "Getting completed workflows from previous day: $previous_day_start to $previous_day_end"
           
           # Get all completed workflow runs from previous day
-          completed_runs=$(gh run list --workflow="$workflow_name" --json id,startedAt,conclusion,headBranch --status completed --limit 100)
+          completed_runs=$(gh run list --workflow="$workflow_name" --json databaseId,startedAt,conclusion,headBranch --status completed --limit 100)
           previous_day_runs=$(echo "$completed_runs" | jq --arg start "$previous_day_start" --arg end "$previous_day_end" '.[] | select(.startedAt >= $start and .startedAt <= $end)')
           
           echo "Found completed workflow runs from previous day:"
