@@ -108,8 +108,8 @@ jobs:
             if [ -n "$run_id" ]; then
               echo "Checking artifacts for run ID: $run_id"
               
-              # Get artifacts for this run
-              artifacts=$(gh run view $run_id --json artifacts --jq '.artifacts[].name')
+              # Get artifacts for this run using GitHub API
+              artifacts=$(gh api /repos/${{ github.repository }}/actions/runs/$run_id/artifacts --jq '.artifacts[].name')
               
               # Check for scan-success-branch-* artifacts
               security_scan_artifacts=$(echo "$artifacts" | grep "^scan-success-branch-" || true)
