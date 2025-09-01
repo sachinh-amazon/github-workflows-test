@@ -75,17 +75,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           workflow_name="Security Scanning"
-          # Get previous day from 00:00 UTC to 23:59 UTC
-          previous_day_start=$(date -d 'yesterday' -u +%Y-%m-%dT00:00:00Z)
-          previous_day_end=$(date -d 'yesterday' -u +%Y-%m-%dT23:59:59Z)
+          # Get workflows from 1 hour ago to now (for testing)
+          previous_day_start=$(date -d '1 hour ago' -u +%Y-%m-%dT%H:%M:%SZ)
+          previous_day_end=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           
-          echo "Getting completed workflows from previous day: $previous_day_start to $previous_day_end"
+          echo "Getting completed workflows from 1 hour ago: $previous_day_start to $previous_day_end"
           
-          # Get all completed workflow runs from previous day
+          # Get all completed workflow runs from 1 hour ago
           completed_runs=$(gh run list --workflow="$workflow_name" --json databaseId,startedAt,conclusion,headBranch --status completed --limit 100)
           previous_day_runs=$(echo "$completed_runs" | jq --arg start "$previous_day_start" --arg end "$previous_day_end" '.[] | select(.startedAt >= $start and .startedAt <= $end)')
           
-          echo "Found completed workflow runs from previous day:"
+          echo "Found completed workflow runs from 1 hour ago:"
           echo "$previous_day_runs" | jq -r '.id'
           
           # Store workflow run IDs for artifact checking
@@ -102,7 +102,7 @@ jobs:
           successful_security_scan_branches=""
           successful_global_dependencies_branches=""
           
-          echo "Checking for successful scan artifacts from workflow runs: $run_ids"
+          echo "Checking for successful scan artifacts from workflow runs (1 hour ago): $run_ids"
           
           for run_id in $run_ids; do
             if [ -n "$run_id" ]; then
@@ -136,8 +136,8 @@ jobs:
           successful_security_scan_branches=$(echo $successful_security_scan_branches | tr ' ' '\n' | sort -u | tr '\n' ' ')
           successful_global_dependencies_branches=$(echo $successful_global_dependencies_branches | tr ' ' '\n' | sort -u | tr '\n' ' ')
           
-          echo "Branches with successful security scans from previous day: $successful_security_scan_branches"
-          echo "Branches with successful global dependency scans from previous day: $successful_global_dependencies_branches"
+          echo "Branches with successful security scans from 1 hour ago: $successful_security_scan_branches"
+          echo "Branches with successful global dependency scans from 1 hour ago: $successful_global_dependencies_branches"
           
           echo "successful-security-scan-branches=$successful_security_scan_branches" >> $GITHUB_OUTPUT
           echo "successful-global-dependencies-branches=$successful_global_dependencies_branches" >> $GITHUB_OUTPUT
@@ -152,7 +152,7 @@ jobs:
           branches_to_scan=""
           
           echo "Upstream branches: $upstream_branches"
-          echo "Successfully scanned branches from previous day: $successful_branches"
+          echo "Successfully scanned branches from 1 hour ago: $successful_branches"
           
           # Check each upstream branch
           for branch in $upstream_branches; do
@@ -160,9 +160,9 @@ jobs:
             if [ -n "$branch" ]; then
               # Check if this branch was successfully scanned yesterday
               if echo "$successful_branches" | grep -q "\b$branch\b"; then
-                echo "Skipping branch $branch - found successful scan from previous day"
+                echo "Skipping branch $branch - found successful scan from 1 hour ago"
               else
-                echo "Adding branch $branch to security scan list - no successful scan from previous day"
+                echo "Adding branch $branch to security scan list - no successful scan from 1 hour ago"
                 branches_to_scan="$branches_to_scan $branch"
               fi
             fi
@@ -176,7 +176,7 @@ jobs:
             echo "Security scan branches to scan: $json_branches"
           else
             echo "branches=[]" >> $GITHUB_OUTPUT
-            echo "No security scan branches to scan - all have successful scans from previous day"
+            echo "No security scan branches to scan - all have successful scans from 1 hour ago"
           fi
 
       - name: Determine global dependencies branches for scheduled runs
@@ -189,7 +189,7 @@ jobs:
           branches_to_scan=""
           
           echo "Upstream branches: $upstream_branches"
-          echo "Successfully scanned global dependencies branches from previous day: $successful_branches"
+          echo "Successfully scanned global dependencies branches from 1 hour ago: $successful_branches"
           
           # Check each upstream branch
           for branch in $upstream_branches; do
@@ -197,9 +197,9 @@ jobs:
             if [ -n "$branch" ]; then
               # Check if this branch was successfully scanned yesterday
               if echo "$successful_branches" | grep -q "\b$branch\b"; then
-                echo "Skipping branch $branch - found successful global dependencies scan from previous day"
+                echo "Skipping branch $branch - found successful global dependencies scan from 1 hour ago"
               else
-                echo "Adding branch $branch to global dependencies scan list - no successful scan from previous day"
+                echo "Adding branch $branch to global dependencies scan list - no successful scan from 1 hour ago"
                 branches_to_scan="$branches_to_scan $branch"
               fi
             fi
@@ -213,7 +213,7 @@ jobs:
             echo "Global dependencies branches to scan: $json_branches"
           else
             echo "branches=[]" >> $GITHUB_OUTPUT
-            echo "No global dependencies branches to scan - all have successful scans from previous day"
+            echo "No global dependencies branches to scan - all have successful scans from 1 hour ago"
           fi
 
   security-scan:
