@@ -319,6 +319,7 @@ jobs:
   security-scan-global-dependencies:
     runs-on: ubuntu-latest
     needs: [get-branches-to-scan]
+    if: needs.get-branches-to-scan.outputs.global-dependencies-branches != '[]'
     environment: security-scanning-workflow-env
     permissions:
       id-token: write # Required for OIDC
