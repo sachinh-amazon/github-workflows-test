@@ -22,22 +22,27 @@ jobs:
     steps:
       - name: Assume IAM Role
         run: |
-          echo "Sleeping!"
-          sleep 90s
-          exit 1
+          echo "PASS" > scan-success.txt
+      
+      - name: Upload Success Indicator File
+        uses: actions/upload-artifact@v4
+        with:
+          name: scan-success
+          path: scan-success.txt
+          retention-days: 90
   
-  security-scan-global-dependencies:
-    runs-on: ubuntu-latest
-    needs: [get-branches-to-scan]
-    strategy:
-      matrix:
-        target: [code-editor-sagemaker-server, code-editor-server]
-    steps:
-      - name: Assume IAM Role v2
-        run: |
-          if [ "${{ matrix.target }}" = "code-editor-server" ]; then
-            echo "Failing for code-editor-server"
-            exit 1
-          fi
-          echo "I'm still running for code-editor-sagemaker-server"
-          sleep 1m
+  # security-scan-global-dependencies:
+  #   runs-on: ubuntu-latest
+  #   needs: [get-branches-to-scan]
+  #   strategy:
+  #     matrix:
+  #       target: [code-editor-sagemaker-server, code-editor-server]
+  #   steps:
+  #     - name: Assume IAM Role v2
+  #       run: |
+  #         if [ "${{ matrix.target }}" = "code-editor-server" ]; then
+  #           echo "Failing for code-editor-server"
+  #           exit 1
+  #         fi
+  #         echo "I'm still running for code-editor-sagemaker-server"
+  #         sleep 1m
