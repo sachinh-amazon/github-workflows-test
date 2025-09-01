@@ -1,24 +1,44 @@
-name: Build Workflow
+name: Security Scanning
+
 on:
-  push:
-    branches:
-      - 'main'
-      - '*.*.x'
   workflow_dispatch:
-  
+
 jobs:
-  build:
-    name: Build Code Editor Targets
+  get-branches-to-scan:
     runs-on: ubuntu-latest
-    environment: security-scan
+    outputs:
+      branches: ${{ steps.determine-branches.outputs.branches }}
+    steps:
+      - name: Checkout repository
+        run: |
+          echo "Hi there!"
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: [get-branches-to-scan]
     strategy:
       matrix:
-        build-targets: [code-editor-server, code-editor-sagemaker-server, code-editor-web-embedded]
-        exclude:
-          # Only build SageMaker for now, remove the excluded targets when needed in the future.
-          - build-targets: code-editor-server
-          - build-targets: code-editor-web-embedded
+        target: [code-editor-sagemaker-server, code-editor-server]
     steps:
-      - name: Start Build Workflow
+      - name: Assume IAM Role
         run: |
-          echo "Starting Build Workflow for target: ${{ matrix.build-targets }}"
+          echo "Sleeping!"
+          sleep 90s
+          exit 1
+  
+  security-scan-global-dependencies:
+    runs-on: ubuntu-latest
+    needs: [get-branches-to-scan]
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [code-editor-sagemaker-server, code-editor-server]
+    steps:
+      - name: Assume IAM Role v2
+        run: |
+          if [ "${{ matrix.target }}" = "code-editor-server" ]; then
+            echo "Failing for code-editor-server"
+            exit 1
+          fi
+          echo "I'm still running for code-editor-sagemaker-server"
+          sleep 1m
