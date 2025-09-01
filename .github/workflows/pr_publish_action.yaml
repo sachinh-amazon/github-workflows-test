@@ -30,7 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [get-branches-to-scan]
     strategy:
-      fail-fast: false
       matrix:
         target: [code-editor-sagemaker-server, code-editor-server]
     steps:
