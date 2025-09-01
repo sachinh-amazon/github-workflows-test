@@ -18,7 +18,7 @@ jobs:
     needs: [get-branches-to-scan]
     strategy:
       matrix:
-        target: [code-editor-sagemaker-server, code-editor-server]
+        target: [code-editor-sagemaker-server]
     steps:
       - name: Assume IAM Role
         run: |
@@ -29,6 +29,7 @@ jobs:
         with:
           name: scan-success
           path: scan-success.txt
+          compression-level: 0
           retention-days: 90
   
   # security-scan-global-dependencies:
